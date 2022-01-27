@@ -6,4 +6,5 @@
 *.fatbin
 
 # Folders
+.idea
 cmake-build-debug
