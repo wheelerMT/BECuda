@@ -1,0 +1,13 @@
+cmake_minimum_required(VERSION 3.21)
+project(BECuda CUDA)
+
+set(CMAKE_CUDA_STANDARD 17)
+
+set(INCLUDES include/grid.cuh)
+set(SOURCES src/grid.cu)
+
+add_library(BECuda SHARED ${SOURCES})
+target_include_directories(${PROJECT_NAME} PUBLIC include/)
+
+set_target_properties(BECuda PROPERTIES
+        CUDA_SEPARABLE_COMPILATION ON)
