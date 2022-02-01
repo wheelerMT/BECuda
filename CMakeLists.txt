@@ -3,7 +3,7 @@ project(BECuda CUDA)
 
 set(CMAKE_CUDA_STANDARD 17)
 
-set(INCLUDES include/constants.h include/grid.cuh)
+set(INCLUDES include/BECuda.cuh include/constants.h include/grid.cuh)
 set(SOURCES src/grid.cu)
 
 add_library(BECuda SHARED ${INCLUDES} ${SOURCES})
@@ -11,3 +11,5 @@ target_include_directories(${PROJECT_NAME} PUBLIC include/)
 
 set_target_properties(BECuda PROPERTIES
         CUDA_SEPARABLE_COMPILATION ON)
+
+add_subdirectory(tests)
