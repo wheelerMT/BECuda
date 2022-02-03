@@ -6,7 +6,7 @@ set(CMAKE_CUDA_STANDARD 17)
 set(INCLUDES include/BECuda.cuh include/constants.h include/grid.cuh)
 set(SOURCES src/grid.cu)
 
-add_library(BECuda SHARED ${INCLUDES} ${SOURCES})
+add_library(BECuda STATIC ${INCLUDES} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PUBLIC include/)
 
 set_target_properties(BECuda PROPERTIES
