@@ -18,8 +18,6 @@ private:
 
     void constructGrids();
 
-    void fftshift();
-
 public:
     // Grid points
     const unsigned int nx{};
@@ -32,18 +30,24 @@ public:
     double dky{};
 
     // Grid lengths
-    double len_x{};
-    double len_y{};
+    double lenX{};
+    double lenY{};
 
     // Grids
-    doubleArray_t X{};
-    doubleArray_t Y{};
-    doubleArray_t Kx{};
-    doubleArray_t Ky{};
-    doubleArray_t K{};
+    double *X{};
+    double *Y{};
+    double *Kx{};
+    double *Ky{};
+    double *K{};  // Square of wave number, |k|^2 = kx^2 + ky^2
 
     // Constructors
     Grid2D(unsigned int nx, unsigned int ny, double dx, double dy);
+
+    // Destructor
+    ~Grid2D();
+
+    // FFT functions
+    void fftshift() const;
 
 };
 
