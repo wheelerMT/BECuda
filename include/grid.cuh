@@ -19,6 +19,10 @@ private:
     void constructGrids();
 
 public:
+    // --------------------
+    // Variables
+    // --------------------
+
     // Grid points
     const int nx{};
     const int ny{};
@@ -39,6 +43,10 @@ public:
     double *Kx{};
     double *Ky{};
     double *K{};  // Square of wave number, |k|^2 = kx^2 + ky^2
+
+    // --------------------
+    // Methods
+    // --------------------
 
     // Constructors
     Grid2D(int nx, int ny, double dx, double dy);
