@@ -7,13 +7,13 @@
 
 Wavefunction2D::Wavefunction2D(Grid2D &grid) : grid{grid}
 {
-    // Allocate arrays
-    plus = new cufftComplex[grid.nx * grid.ny];
-    zero = new cufftComplex[grid.nx * grid.ny];
-    minus = new cufftComplex[grid.nx * grid.ny];
-    plus_k = new cufftComplex[grid.nx * grid.ny];
-    zero_k = new cufftComplex[grid.nx * grid.ny];
-    minus_k = new cufftComplex[grid.nx * grid.ny];
+    // Allocate arrays on device
+    cudaMalloc(&plus, grid.nx * grid.ny * sizeof(cufftComplex));
+    cudaMalloc(&zero, grid.nx * grid.ny * sizeof(cufftComplex));
+    cudaMalloc(&minus, grid.nx * grid.ny * sizeof(cufftComplex));
+    cudaMalloc(&plus_k, grid.nx * grid.ny * sizeof(cufftComplex));
+    cudaMalloc(&zero_k, grid.nx * grid.ny * sizeof(cufftComplex));
+    cudaMalloc(&minus_k, grid.nx * grid.ny * sizeof(cufftComplex));
 
     // Initialise FFT plans
     generateFFTPlans();
@@ -21,28 +21,20 @@ Wavefunction2D::Wavefunction2D(Grid2D &grid) : grid{grid}
 
 Wavefunction2D::~Wavefunction2D()
 {
-    // This needs to call appropriate functions
-    // to de-allocate arrays on device memory
+    // Free device memory
+    cudaFree(plus);
+    cudaFree(zero);
+    cudaFree(minus);
+    cudaFree(plus_k);
+    cudaFree(zero_k);
+    cudaFree(minus_k);
 }
 
 void Wavefunction2D::generateFFTPlans()
 {
-    // Generate CUDA FFT plans for each component check for errors
-    if (cufftPlan2d(&m_planPlus, grid.nx, grid.ny, CUFFT_C2C) != CUFFT_SUCCESS)
-    {
-        std::cerr << "CUFFT error: Plan creation failed...\n";
-        return;
-    };
-    if (cufftPlan2d(&m_planZero, grid.nx, grid.ny, CUFFT_C2C) != CUFFT_SUCCESS)
-    {
-        std::cerr << "CUFFT error: Plan creation failed...\n";
-        return;
-    };
-    if (cufftPlan2d(&m_planMinus, grid.nx, grid.ny, CUFFT_C2C) != CUFFT_SUCCESS)
-    {
-        std::cerr << "CUFFT error: Plan creation failed...\n";
-        return;
-    };
+    // Generate CUDA FFT plans for each component
+    cufftPlan2d(&m_FFTPlan, grid.nx, grid.ny, CUFFT_C2C);
+
 }
 
 void Wavefunction2D::setInitialState(const std::string &gsPhase)

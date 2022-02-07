@@ -19,10 +19,25 @@ class Wavefunction
 class Wavefunction2D : Wavefunction
 {
 private:
-    // FFT plans for each wavefunction component
-    cufftHandle m_planPlus{}, m_planZero{}, m_planMinus{};
+    // FFT plan
+    cufftHandle m_FFTPlan{};
 
 public:
+    // --------------------
+    // Variables
+    // --------------------
+
+    // Reference to grid object
+    Grid2D &grid;
+
+    // Wavefunction components
+    cufftComplex *plus{}, *zero{}, *minus{};
+    cufftComplex *plus_k{}, *zero_k{}, *minus_k{};  // K-space versions
+
+    // --------------------
+    // Methods
+    // --------------------
+
     // Constructor
     explicit Wavefunction2D(Grid2D &grid);
 
@@ -31,18 +46,13 @@ public:
 
     // FFT-related functions
     void generateFFTPlans();
+
     void executeFFT();
+
     void executeIFFT();
 
     // Initial state functions
     void setInitialState(const std::string &gsPhase);
-
-    // Reference to grid object
-    Grid2D &grid;
-
-    // Wavefunction components
-    cufftComplex *plus{}, *zero{}, *minus{};
-    cufftComplex *plus_k{}, *zero_k{}, *minus_k{};  // K-space versions
 
 };
 
