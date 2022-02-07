@@ -20,8 +20,8 @@ private:
 
 public:
     // Grid points
-    const unsigned int nx{};
-    const unsigned int ny{};
+    const int nx{};
+    const int ny{};
 
     // Grid spacing
     double dx{};
