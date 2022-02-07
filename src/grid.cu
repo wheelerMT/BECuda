@@ -115,7 +115,7 @@ void Grid2D::fftshift() const
     }
 }
 
-Grid2D::Grid2D(unsigned int nx, unsigned int ny, double dx, double dy)
+Grid2D::Grid2D(int nx, int ny, double dx, double dy)
         : nx{nx}, ny{ny}, dx{dx}, dy{dy}
 {
     constructGridParameters();

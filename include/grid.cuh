@@ -41,7 +41,7 @@ public:
     double *K{};  // Square of wave number, |k|^2 = kx^2 + ky^2
 
     // Constructors
-    Grid2D(unsigned int nx, unsigned int ny, double dx, double dy);
+    Grid2D(int nx, int ny, double dx, double dy);
 
     // Destructor
     ~Grid2D();
