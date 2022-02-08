@@ -8,6 +8,8 @@
 #include <cufft.h>
 #include <string>
 #include <iostream>
+#include <random>
+#include <chrono>
 #include "grid.cuh"
 
 // Abstract base class
@@ -47,13 +49,13 @@ public:
     // FFT-related functions
     void generateFFTPlans();
 
-    void executeFFT();
+    void fft();
 
-    void executeIFFT();
+    void ifft();
 
     // Initial state functions
-    void setInitialState(const std::string &gsPhase);
-
+    void setInitialState(const std::string &gsPhase) const;
+    void add_noise(std::string const &components, float mean, float stddev) const;
 };
 
 #endif //BECUDA_WAVEFUNCTION_H
