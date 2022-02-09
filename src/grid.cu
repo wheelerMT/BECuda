@@ -119,6 +119,14 @@ Grid2D::Grid2D(int xNumGridPts, int yNumGridPts, double xGridSpacing, double yGr
     constructGrids();
 }
 
+Grid2D::Grid2D(const Grid2D &grid)
+        : xNumGridPts{grid.xNumGridPts}, yNumGridPts{grid.yNumGridPts},
+          xGridSpacing{grid.xGridSpacing}, yGridSpacing{grid.yGridSpacing}
+{
+    constructGridParameters();
+    constructGrids();
+}
+
 Grid2D::~Grid2D()
 {
     delete[] xMesh;

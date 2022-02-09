@@ -44,6 +44,8 @@ public:
     // Constructors
     Grid2D(int xNumGridPts, int yNumGridPts, double xGridSpacing, double yGridSpacing);
 
+    Grid2D(const Grid2D &grid);
+
     // Destructor
     ~Grid2D();
 
