@@ -60,11 +60,11 @@ void Wavefunction2D::setPolarInitialState() const
     }
 }
 
-void Wavefunction2D::add_noise(const std::string &components, float mean, float stddev) const
+void Wavefunction2D::addNoise(const std::string &components, float mean, float stddev) const
 {
     // Construct random generator
-    unsigned seed1 = std::chrono::system_clock::now().time_since_epoch().count();
-    std::default_random_engine generator{seed1};
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine generator{seed};
     std::normal_distribution<float> norm_dist{mean, stddev};
 
     if (components == "outer")

@@ -58,7 +58,7 @@ public:
 
     // Initial state functions
     void setInitialState(const std::string &groundState) const;
-    void add_noise(std::string const &components, float mean, float stddev) const;
+    void addNoise(std::string const &components, float mean, float stddev) const;
 };
 
 #endif //BECUDA_WAVEFUNCTION_H
