@@ -1,7 +1,3 @@
-//
-// Created by mattw on 27/01/2022.
-//
-
 #include <vector>
 #include "constants.h"
 #include "grid.cuh"

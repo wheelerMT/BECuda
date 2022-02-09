@@ -1,7 +1,3 @@
-//
-// Created by mattw on 27/01/2022.
-//
-
 #ifndef BECUDA_GRID_CUH
 #define BECUDA_GRID_CUH
 

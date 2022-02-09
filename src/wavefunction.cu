@@ -1,13 +1,8 @@
-//
-// Created by mattw on 07/02/2022.
-//
-
 #include "wavefunction.cuh"
 
 
 Wavefunction2D::Wavefunction2D(Grid2D &grid) : grid{grid}
 {
-    // Allocate arrays
     plusComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
     zeroComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
     minusComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
@@ -18,7 +13,6 @@ Wavefunction2D::Wavefunction2D(Grid2D &grid) : grid{grid}
 
 Wavefunction2D::~Wavefunction2D()
 {
-    // Free device memory
     cudaFree(plusComponent);
     cudaFree(zeroComponent);
     cudaFree(minusComponent);
@@ -29,9 +23,7 @@ Wavefunction2D::~Wavefunction2D()
 
 void Wavefunction2D::generateFFTPlans()
 {
-    // Generate CUDA FFT plans for each component
     cufftPlan2d(&fftPlan, grid.xNumGridPts, grid.yNumGridPts, CUFFT_C2C);
-
 }
 
 void Wavefunction2D::setInitialState(const std::string &groundState) const
@@ -67,8 +59,6 @@ void Wavefunction2D::addNoise(const std::string &components, float mean, float s
     if (components == "outer")
     {
         std::cout << "Adding noise...\n";
-
-        // Add noise to outer components
         for (int i = 0; i < grid.xNumGridPts; i++)
         {
             for (int j = 0; j < grid.yNumGridPts; j++)
