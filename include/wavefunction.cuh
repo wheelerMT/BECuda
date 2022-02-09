@@ -36,8 +36,8 @@ public:
     Grid2D &grid;
 
     // Wavefunction components
-    cufftComplex *plus{}, *zero{}, *minus{};
-    cufftComplex *plus_k{}, *zero_k{}, *minus_k{};  // K-space versions
+    cufftComplex *plusComponent{}, *zeroComponent{}, *minusComponent{};
+    cufftComplex *plusFourierComponent{}, *zeroFourierComponent{}, *minusFourierComponent{};  // K-space versions
 
     // --------------------
     // Methods
@@ -51,10 +51,6 @@ public:
 
     // FFT-related functions
     void generateFFTPlans();
-
-    void fft();
-
-    void ifft();
 
     // Initial state functions
     void setInitialState(const std::string &groundState) const;

@@ -8,26 +8,23 @@
 Wavefunction2D::Wavefunction2D(Grid2D &grid) : grid{grid}
 {
     // Allocate arrays
-    plus = new cufftComplex[grid.nx * grid.ny]{};
-    zero = new cufftComplex[grid.nx * grid.ny]{};
-    minus = new cufftComplex[grid.nx * grid.ny]{};
-    plus_k = new cufftComplex[grid.nx * grid.ny]{};
-    zero_k = new cufftComplex[grid.nx * grid.ny]{};
-    minus_k = new cufftComplex[grid.nx * grid.ny]{};
-
-    // Initialise FFT plans
-    generateFFTPlans();
+    plusComponent = new cufftComplex[grid.nx * grid.ny]{};
+    zeroComponent = new cufftComplex[grid.nx * grid.ny]{};
+    minusComponent = new cufftComplex[grid.nx * grid.ny]{};
+    plusFourierComponent = new cufftComplex[grid.nx * grid.ny]{};
+    zeroFourierComponent = new cufftComplex[grid.nx * grid.ny]{};
+    minusFourierComponent = new cufftComplex[grid.nx * grid.ny]{};
 }
 
 Wavefunction2D::~Wavefunction2D()
 {
     // Free device memory
-    cudaFree(plus);
-    cudaFree(zero);
-    cudaFree(minus);
-    cudaFree(plus_k);
-    cudaFree(zero_k);
-    cudaFree(minus_k);
+    cudaFree(plusComponent);
+    cudaFree(zeroComponent);
+    cudaFree(minusComponent);
+    cudaFree(plusFourierComponent);
+    cudaFree(zeroFourierComponent);
+    cudaFree(minusFourierComponent);
 }
 
 void Wavefunction2D::generateFFTPlans()
@@ -53,9 +50,9 @@ void Wavefunction2D::setPolarInitialState() const
     {
         for (int j = 0; j < grid.ny; ++j)
         {
-            plus[j + i * grid.nx] = {0., 0.};
-            zero[j + i * grid.nx] = {1., 0.};
-            minus[j + i * grid.nx] = {0., 0.};
+            plusComponent[j + i * grid.nx] = {0., 0.};
+            zeroComponent[j + i * grid.nx] = {1., 0.};
+            minusComponent[j + i * grid.nx] = {0., 0.};
         }
     }
 }
@@ -76,10 +73,10 @@ void Wavefunction2D::addNoise(const std::string &components, float mean, float s
         {
             for (int j = 0; j < grid.ny; j++)
             {
-                plus[j + i * grid.nx].x += norm_dist(generator);
-                plus[j + i * grid.nx].y += norm_dist(generator);
-                minus[j + i * grid.nx].x += norm_dist(generator);
-                minus[j + i * grid.nx].y += norm_dist(generator);
+                plusComponent[j + i * grid.nx].x += norm_dist(generator);
+                plusComponent[j + i * grid.nx].y += norm_dist(generator);
+                minusComponent[j + i * grid.nx].x += norm_dist(generator);
+                minusComponent[j + i * grid.nx].y += norm_dist(generator);
             }
         }
     }
