@@ -22,7 +22,7 @@ private:
     void setPolarInitialState() const;
 
 public:
-    Grid2D &grid;
+    Grid2D grid;
 
     cufftComplex *plusComponent{}, *zeroComponent{}, *minusComponent{};
     cufftComplex *plusFourierComponent{}, *zeroFourierComponent{}, *minusFourierComponent{};  // K-space versions
