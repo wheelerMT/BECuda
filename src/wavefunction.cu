@@ -8,12 +8,12 @@
 Wavefunction2D::Wavefunction2D(Grid2D &grid) : grid{grid}
 {
     // Allocate arrays
-    plusComponent = new cufftComplex[grid.nx * grid.ny]{};
-    zeroComponent = new cufftComplex[grid.nx * grid.ny]{};
-    minusComponent = new cufftComplex[grid.nx * grid.ny]{};
-    plusFourierComponent = new cufftComplex[grid.nx * grid.ny]{};
-    zeroFourierComponent = new cufftComplex[grid.nx * grid.ny]{};
-    minusFourierComponent = new cufftComplex[grid.nx * grid.ny]{};
+    plusComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
+    zeroComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
+    minusComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
+    plusFourierComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
+    zeroFourierComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
+    minusFourierComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
 }
 
 Wavefunction2D::~Wavefunction2D()
@@ -30,7 +30,7 @@ Wavefunction2D::~Wavefunction2D()
 void Wavefunction2D::generateFFTPlans()
 {
     // Generate CUDA FFT plans for each component
-    cufftPlan2d(&fftPlan, grid.nx, grid.ny, CUFFT_C2C);
+    cufftPlan2d(&fftPlan, grid.xNumGridPts, grid.yNumGridPts, CUFFT_C2C);
 
 }
 
@@ -46,13 +46,13 @@ void Wavefunction2D::setInitialState(const std::string &groundState) const
 
 void Wavefunction2D::setPolarInitialState() const
 {
-    for (int i = 0; i < grid.nx; ++i)
+    for (int i = 0; i < grid.xNumGridPts; ++i)
     {
-        for (int j = 0; j < grid.ny; ++j)
+        for (int j = 0; j < grid.yNumGridPts; ++j)
         {
-            plusComponent[j + i * grid.nx] = {0., 0.};
-            zeroComponent[j + i * grid.nx] = {1., 0.};
-            minusComponent[j + i * grid.nx] = {0., 0.};
+            plusComponent[j + i * grid.xNumGridPts] = {0., 0.};
+            zeroComponent[j + i * grid.xNumGridPts] = {1., 0.};
+            minusComponent[j + i * grid.xNumGridPts] = {0., 0.};
         }
     }
 }
@@ -69,14 +69,14 @@ void Wavefunction2D::addNoise(const std::string &components, float mean, float s
         std::cout << "Adding noise...\n";
 
         // Add noise to outer components
-        for (int i = 0; i < grid.nx; i++)
+        for (int i = 0; i < grid.xNumGridPts; i++)
         {
-            for (int j = 0; j < grid.ny; j++)
+            for (int j = 0; j < grid.yNumGridPts; j++)
             {
-                plusComponent[j + i * grid.nx].x += norm_dist(generator);
-                plusComponent[j + i * grid.nx].y += norm_dist(generator);
-                minusComponent[j + i * grid.nx].x += norm_dist(generator);
-                minusComponent[j + i * grid.nx].y += norm_dist(generator);
+                plusComponent[j + i * grid.xNumGridPts].x += norm_dist(generator);
+                plusComponent[j + i * grid.xNumGridPts].y += norm_dist(generator);
+                minusComponent[j + i * grid.xNumGridPts].x += norm_dist(generator);
+                minusComponent[j + i * grid.xNumGridPts].y += norm_dist(generator);
             }
         }
     }

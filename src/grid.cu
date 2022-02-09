@@ -9,33 +9,34 @@
 void Grid2D::constructGridParameters()
 {
     // K-space grid spacing
-    dkx = PI / (nx / 2. * dx);
-    dky = PI / (ny / 2. * dy);
+    xFourierGridSpacing = PI / (xNumGridPts / 2. * xGridSpacing);
+    yFourierGridSpacing = PI / (yNumGridPts / 2. * yGridSpacing);
 
     // Set length of sides of box
-    lenX = nx * dx;
-    lenY = ny * dy;
+    xLengthOfBox = xNumGridPts * xGridSpacing;
+    yLengthOfBox = yNumGridPts * yGridSpacing;
 }
 
 void Grid2D::constructGrids()
 {
     // Allocate meshgrid arrays
-    X = new double[nx * ny];
-    Y = new double[nx * ny];
-    Kx = new double[nx * ny];
-    Ky = new double[nx * ny];
-    K = new double[nx * ny];
+    xMesh = new double[xNumGridPts * yNumGridPts];
+    yMesh = new double[xNumGridPts * yNumGridPts];
+    xFourierMesh = new double[xNumGridPts * yNumGridPts];
+    yFourierMesh = new double[xNumGridPts * yNumGridPts];
+    wavenumberMesh = new double[xNumGridPts * yNumGridPts];
 
     // Construct grids
-    for (int i = 0; i < nx; ++i)
+    for (int i = 0; i < xNumGridPts; ++i)
     {
-        for (int j = 0; j < ny; ++j)
+        for (int j = 0; j < yNumGridPts; ++j)
         {
-            X[j + i * ny] = (j - nx / 2.) * dx;
-            Kx[j + i * ny] = (j - ny / 2.) * dkx;
-            Y[j + i * ny] = (j - nx / 2.) * dy;
-            Ky[j + i * ny] = (j - ny / 2.) * dky;
-            K[j + i * ny] = std::pow(Kx[j + i * ny], 2) + std::pow(Ky[j + i * ny], 2);
+            xMesh[j + i * yNumGridPts] = (j - xNumGridPts / 2.) * xGridSpacing;
+            xFourierMesh[j + i * yNumGridPts] = (j - yNumGridPts / 2.) * xFourierGridSpacing;
+            yMesh[j + i * yNumGridPts] = (j - xNumGridPts / 2.) * yGridSpacing;
+            yFourierMesh[j + i * yNumGridPts] = (j - yNumGridPts / 2.) * yFourierGridSpacing;
+            wavenumberMesh[j + i * yNumGridPts] = std::pow(xFourierMesh[j + i * yNumGridPts], 2)
+                                                  + std::pow(yFourierMesh[j + i * yNumGridPts], 2);
         }
     }
 }
@@ -43,80 +44,80 @@ void Grid2D::constructGrids()
 void Grid2D::fftshift() const
 {
     /*
-        Shifts the zero-frequency component to the center
-        of the spectrum.
+    * Shifts the zero-frequency component to the center
+    * of the spectrum.
     */
 
-    // Make a copy of K-space arrays
-    std::vector<double> kxCopy(nx * ny);
-    std::vector<double> kyCopy(nx * ny);
+    std::vector<double> xFourierMeshCopy(xNumGridPts * yNumGridPts);
+    std::vector<double> yFourierMeshCopy(xNumGridPts * yNumGridPts);
 
-    for (int i = 0; i < nx; ++i)
+    for (int i = 0; i < xNumGridPts; ++i)
     {
-        for (int j = 0; j < ny; ++j)
+        for (int j = 0; j < yNumGridPts; ++j)
         {
-            kxCopy[j + i * nx] = Kx[j + i * nx];
-            kyCopy[j + i * nx] = Ky[j + i * nx];
+            xFourierMeshCopy[j + i * xNumGridPts] = xFourierMesh[j + i * xNumGridPts];
+            yFourierMeshCopy[j + i * xNumGridPts] = yFourierMesh[j + i * xNumGridPts];
         }
     }
 
     // Reverse each row
-    for (int i = 0; i < nx; ++i)
+    for (int i = 0; i < xNumGridPts; ++i)
     {
-        for (int j = 0; j < nx; ++j)
+        for (int j = 0; j < xNumGridPts; ++j)
         {
-            if (j < nx / 2)
+            if (j < xNumGridPts / 2)
             {
-                Kx[j + i * ny] = kxCopy[nx / 2 + j + i * ny];
-                Ky[j + i * ny] = kyCopy[nx / 2 + j + i * ny];
-            } else if (j >= nx / 2)
+                xFourierMesh[j + i * yNumGridPts] = xFourierMeshCopy[xNumGridPts / 2 + j + i * yNumGridPts];
+                yFourierMesh[j + i * yNumGridPts] = yFourierMeshCopy[xNumGridPts / 2 + j + i * yNumGridPts];
+            } else if (j >= xNumGridPts / 2)
             {
-                Kx[j + i * ny] = kxCopy[j - nx / 2 + i * ny];
-                Ky[j + i * ny] = kyCopy[j - nx / 2 + i * ny];
+                xFourierMesh[j + i * yNumGridPts] = xFourierMeshCopy[j - xNumGridPts / 2 + i * yNumGridPts];
+                yFourierMesh[j + i * yNumGridPts] = yFourierMeshCopy[j - xNumGridPts / 2 + i * yNumGridPts];
             }
 
         }
     }
 
-    // Update array copies
-    for (int i = 0; i < nx; ++i)
+    for (int i = 0; i < xNumGridPts; ++i)
     {
-        for (int j = 0; j < ny; ++j)
+        for (int j = 0; j < yNumGridPts; ++j)
         {
-            kxCopy[j + i * nx] = Kx[j + i * nx];
-            kyCopy[j + i * nx] = Ky[j + i * nx];
+            xFourierMeshCopy[j + i * xNumGridPts] = xFourierMesh[j + i * xNumGridPts];
+            yFourierMeshCopy[j + i * xNumGridPts] = yFourierMesh[j + i * xNumGridPts];
         }
     }
 
     // Reverse each column
-    for (int i = 0; i < nx; ++i)
+    for (int i = 0; i < xNumGridPts; ++i)
     {
-        for (int j = 0; j < nx; ++j)
+        for (int j = 0; j < xNumGridPts; ++j)
         {
-            if (j < nx / 2)
+            if (j < xNumGridPts / 2)
             {
-                Kx[i + j * nx] = kxCopy[(nx / 2 + j) * nx + i];
-                Ky[i + j * nx] = kyCopy[(nx / 2 + j) * nx + i];
-            } else if (j >= nx / 2)
+                xFourierMesh[i + j * xNumGridPts] = xFourierMeshCopy[(xNumGridPts / 2 + j) * xNumGridPts + i];
+                yFourierMesh[i + j * xNumGridPts] = yFourierMeshCopy[(xNumGridPts / 2 + j) * xNumGridPts + i];
+            } else if (j >= xNumGridPts / 2)
             {
-                Kx[i + j * nx] = kxCopy[(j - nx / 2) * nx + i];
-                Ky[i + j * nx] = kyCopy[(j - nx / 2) * nx + i];
+                xFourierMesh[i + j * xNumGridPts] = xFourierMeshCopy[(j - xNumGridPts / 2) * xNumGridPts + i];
+                yFourierMesh[i + j * xNumGridPts] = yFourierMeshCopy[(j - xNumGridPts / 2) * xNumGridPts + i];
             }
         }
     }
 
     // Re-update wavenumber, k
-    for (int i = 0; i < nx; ++i)
+    for (int i = 0; i < xNumGridPts; ++i)
     {
-        for (int j = 0; j < nx; ++j)
+        for (int j = 0; j < xNumGridPts; ++j)
         {
-            K[j + i * nx] = std::pow(Kx[j + i * nx], 2) + std::pow(Ky[j + i * nx], 2);
+            wavenumberMesh[j + i * xNumGridPts] =
+                    std::pow(xFourierMesh[j + i * xNumGridPts], 2) + std::pow(yFourierMesh[j + i * xNumGridPts], 2);
         }
     }
 }
 
-Grid2D::Grid2D(int nx, int ny, double dx, double dy)
-        : nx{nx}, ny{ny}, dx{dx}, dy{dy}
+Grid2D::Grid2D(int xNumGridPts, int yNumGridPts, double xGridSpacing, double yGridSpacing)
+        : xNumGridPts{xNumGridPts}, yNumGridPts{yNumGridPts},
+          xGridSpacing{xGridSpacing}, yGridSpacing{yGridSpacing}
 {
     constructGridParameters();
     constructGrids();
@@ -124,10 +125,9 @@ Grid2D::Grid2D(int nx, int ny, double dx, double dy)
 
 Grid2D::~Grid2D()
 {
-    // Delete dynamically allocated arrays
-    delete[] X;
-    delete[] Y;
-    delete[] Kx;
-    delete[] Ky;
-    delete[] K;
+    delete[] xMesh;
+    delete[] yMesh;
+    delete[] xFourierMesh;
+    delete[] yFourierMesh;
+    delete[] wavenumberMesh;
 }
