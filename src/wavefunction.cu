@@ -8,12 +8,12 @@
 Wavefunction2D::Wavefunction2D(Grid2D &grid) : grid{grid}
 {
     // Allocate arrays
-    plus = new cufftComplex[grid.nx * grid.ny] {};
-    zero = new cufftComplex[grid.nx * grid.ny] {};
-    minus = new cufftComplex[grid.nx * grid.ny] {};
-    plus_k = new cufftComplex[grid.nx * grid.ny] {};
-    zero_k = new cufftComplex[grid.nx * grid.ny] {};
-    minus_k = new cufftComplex[grid.nx * grid.ny] {};
+    plus = new cufftComplex[grid.nx * grid.ny]{};
+    zero = new cufftComplex[grid.nx * grid.ny]{};
+    minus = new cufftComplex[grid.nx * grid.ny]{};
+    plus_k = new cufftComplex[grid.nx * grid.ny]{};
+    zero_k = new cufftComplex[grid.nx * grid.ny]{};
+    minus_k = new cufftComplex[grid.nx * grid.ny]{};
 
     // Initialise FFT plans
     generateFFTPlans();
@@ -33,26 +33,31 @@ Wavefunction2D::~Wavefunction2D()
 void Wavefunction2D::generateFFTPlans()
 {
     // Generate CUDA FFT plans for each component
-    cufftPlan2d(&m_FFTPlan, grid.nx, grid.ny, CUFFT_C2C);
+    cufftPlan2d(&fftPlan, grid.nx, grid.ny, CUFFT_C2C);
 
 }
 
-void Wavefunction2D::setInitialState(const std::string &gsPhase) const
+void Wavefunction2D::setInitialState(const std::string &groundState) const
 {
-    if (gsPhase == "polar")
+    if (groundState == "polar")
     {
-        for (int i = 0; i < grid.nx; ++i)
-        {
-            for (int j = 0; j < grid.ny; ++j)
-            {
-                plus[j + i * grid.nx] = {0., 0.};
-                zero[j + i * grid.nx] = {1., 0.};
-                minus[j + i * grid.nx] = {0., 0.};
-            }
-        }
+        setPolarInitialState();
     }
 
     // Can add more ground states as needed
+}
+
+void Wavefunction2D::setPolarInitialState() const
+{
+    for (int i = 0; i < grid.nx; ++i)
+    {
+        for (int j = 0; j < grid.ny; ++j)
+        {
+            plus[j + i * grid.nx] = {0., 0.};
+            zero[j + i * grid.nx] = {1., 0.};
+            minus[j + i * grid.nx] = {0., 0.};
+        }
+    }
 }
 
 void Wavefunction2D::add_noise(const std::string &components, float mean, float stddev) const

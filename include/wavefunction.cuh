@@ -22,7 +22,10 @@ class Wavefunction2D : Wavefunction
 {
 private:
     // FFT plan
-    cufftHandle m_FFTPlan{};
+    cufftHandle fftPlan{};
+
+    // Initial State functions
+    void setPolarInitialState() const;
 
 public:
     // --------------------
@@ -54,7 +57,7 @@ public:
     void ifft();
 
     // Initial state functions
-    void setInitialState(const std::string &gsPhase) const;
+    void setInitialState(const std::string &groundState) const;
     void add_noise(std::string const &components, float mean, float stddev) const;
 };
 
