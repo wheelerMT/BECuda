@@ -1,3 +1,4 @@
 [submodule "HighFive"]
 	path = HighFive
 	url = https://github.com/BlueBrain/HighFive
+	ignore = dirty
