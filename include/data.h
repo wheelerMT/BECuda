@@ -6,6 +6,8 @@
 #define BECUDA_DATA_H
 
 #include "highfive/H5File.hpp"
+#include "grid.cuh"
+#include "wavefunction.cuh"
 
 struct Spin1Parameters
 {
@@ -21,9 +23,23 @@ struct Spin1Parameters
 };
 
 
-class DataManager
+class Spin1DataManager2D
 {
+private:
+    unsigned int save_index{0};
 
+    void saveParametersData(const Spin1Parameters &params, const Grid2D &grid);
+
+    void generateWavefunctionDatasets(const Grid2D &grid);
+
+public:
+    // Constructor
+    Spin1DataManager2D(const std::string &filename, const Spin1Parameters &params, const Grid2D &grid);
+
+    void saveWavefunctionData(Wavefunction2D &wavefunction);
+
+    std::string filename;
+    HighFive::File file;
 };
 
 #endif //BECUDA_DATA_H
