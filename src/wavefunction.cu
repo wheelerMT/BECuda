@@ -9,6 +9,8 @@ Wavefunction2D::Wavefunction2D(Grid2D &grid) : grid{grid}
     plusFourierComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
     zeroFourierComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
     minusFourierComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
+
+    trappingPotential = new double[grid.xNumGridPts * grid.yNumGridPts] {};
 }
 
 Wavefunction2D::~Wavefunction2D()
@@ -19,6 +21,17 @@ Wavefunction2D::~Wavefunction2D()
     cudaFree(plusFourierComponent);
     cudaFree(zeroFourierComponent);
     cudaFree(minusFourierComponent);
+}
+
+void Wavefunction2D::setTrappingPotential(const double *newTrappingPotential) const
+{
+    for (int i = 0; i < grid.xNumGridPts; ++i)
+    {
+        for (int j = 0; j < grid.xNumGridPts; ++j)
+        {
+            trappingPotential[j + i * grid.yNumGridPts] = newTrappingPotential[j + i * grid.yNumGridPts];
+        }
+    }
 }
 
 void Wavefunction2D::generateFFTPlans()

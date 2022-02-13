@@ -23,6 +23,7 @@ private:
 
 public:
     Grid2D grid;
+    double *trappingPotential{};
 
     cufftComplex *plusComponent{}, *zeroComponent{}, *minusComponent{};
     cufftComplex *plusFourierComponent{}, *zeroFourierComponent{}, *minusFourierComponent{};  // K-space versions
@@ -32,6 +33,8 @@ public:
     ~Wavefunction2D();
 
     void generateFFTPlans();
+
+    void setTrappingPotential(const double *trappingPotential) const;
 
     void setInitialState(const std::string &groundState) const;
 
