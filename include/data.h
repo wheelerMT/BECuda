@@ -11,6 +11,7 @@
 
 struct Spin1Parameters
 {
+    Spin1Parameters() = default;
     Spin1Parameters(double c0, double c2, double p, double q, int nt, double dt);
 
     double spinIndependentInteraction;
