@@ -6,8 +6,8 @@ find_package(CUDAToolkit REQUIRED)
 find_package(HDF5 REQUIRED COMPONENTS CXX)
 
 set(INCLUDES include/BECuda.cuh include/constants.h include/grid.cuh include/wavefunction.cuh
-             include/data.h)
-set(SOURCES src/grid.cu src/wavefunction.cu src/data.cpp)
+             include/data.h include/kernels.cuh)
+set(SOURCES src/grid.cu src/wavefunction.cu src/data.cpp src/kernels.cu)
 
 add_subdirectory(HighFive)
 
