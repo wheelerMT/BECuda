@@ -3,18 +3,19 @@
 
 Wavefunction2D::Wavefunction2D(Grid2D &grid) : grid{grid}
 {
-    plusComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
-    zeroComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
-    minusComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
-    plusFourierComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
-    zeroFourierComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
-    minusFourierComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
+    h_plusComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
+    h_zeroComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
+    h_minusComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
 
     trappingPotential = new double[grid.xNumGridPts * grid.yNumGridPts] {};
 }
 
 Wavefunction2D::~Wavefunction2D()
 {
+    delete[] h_plusComponent;
+    delete[] h_zeroComponent;
+    delete[] h_minusComponent;
+
     cudaFree(plusComponent);
     cudaFree(zeroComponent);
     cudaFree(minusComponent);
@@ -55,9 +56,9 @@ void Wavefunction2D::setPolarInitialState() const
     {
         for (int j = 0; j < grid.yNumGridPts; ++j)
         {
-            plusComponent[j + i * grid.xNumGridPts] = {0., 0.};
-            zeroComponent[j + i * grid.xNumGridPts] = {1., 0.};
-            minusComponent[j + i * grid.xNumGridPts] = {0., 0.};
+            h_plusComponent[j + i * grid.xNumGridPts] = {0., 0.};
+            h_zeroComponent[j + i * grid.xNumGridPts] = {1., 0.};
+            h_minusComponent[j + i * grid.xNumGridPts] = {0., 0.};
         }
     }
 }
@@ -76,10 +77,10 @@ void Wavefunction2D::addNoiseToComponents(const std::string &components, float m
         {
             for (int j = 0; j < grid.yNumGridPts; j++)
             {
-                plusComponent[j + i * grid.xNumGridPts].x += norm_dist(generator);
-                plusComponent[j + i * grid.xNumGridPts].y += norm_dist(generator);
-                minusComponent[j + i * grid.xNumGridPts].x += norm_dist(generator);
-                minusComponent[j + i * grid.xNumGridPts].y += norm_dist(generator);
+                h_plusComponent[j + i * grid.xNumGridPts].x += norm_dist(generator);
+                h_plusComponent[j + i * grid.xNumGridPts].y += norm_dist(generator);
+                h_minusComponent[j + i * grid.xNumGridPts].x += norm_dist(generator);
+                h_minusComponent[j + i * grid.xNumGridPts].y += norm_dist(generator);
             }
         }
     }

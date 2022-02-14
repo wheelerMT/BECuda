@@ -25,8 +25,12 @@ public:
     Grid2D grid;
     double *trappingPotential{};
 
+    // Host component variables
+    cufftComplex *h_plusComponent{}, *h_zeroComponent{}, *h_minusComponent{};
+
+    // Device component variables
     cufftComplex *plusComponent{}, *zeroComponent{}, *minusComponent{};
-    cufftComplex *plusFourierComponent{}, *zeroFourierComponent{}, *minusFourierComponent{};  // K-space versions
+    cufftComplex *plusFourierComponent{}, *zeroFourierComponent{}, *minusFourierComponent{};
 
     explicit Wavefunction2D(Grid2D &grid);
 

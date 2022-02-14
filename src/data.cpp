@@ -97,13 +97,13 @@ void Spin1DataManager2D::saveWavefunctionData(Wavefunction2D &wavefunction)
     // Save new wavefunction data
     dsPlus.select({0, saveIndex},
                   {static_cast<unsigned long long>(wavefunction.grid.xNumGridPts * wavefunction.grid.yNumGridPts),
-                   1}).write(wavefunction.plusComponent);
+                   1}).write(wavefunction.h_plusComponent);
     dsZero.select({0, saveIndex},
                   {static_cast<unsigned long long>(wavefunction.grid.xNumGridPts * wavefunction.grid.yNumGridPts),
-                   1}).write(wavefunction.zeroComponent);
+                   1}).write(wavefunction.h_zeroComponent);
     dsMinus.select({0, saveIndex},
                    {static_cast<unsigned long long>(wavefunction.grid.xNumGridPts * wavefunction.grid.yNumGridPts),
-                    1}).write(wavefunction.minusComponent);
+                    1}).write(wavefunction.h_minusComponent);
 
     saveIndex += 1;
 }
