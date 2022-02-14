@@ -85,25 +85,25 @@ void Spin1DataManager2D::saveWavefunctionData(Wavefunction2D &wavefunction)
 
     // Resize datasets
     dsPlus.resize({static_cast<unsigned long long>(wavefunction.grid.xNumGridPts * wavefunction.grid.yNumGridPts),
-                   save_index + 1});
+                   saveIndex + 1});
     dsZero.resize({static_cast<unsigned long long>(wavefunction.grid.xNumGridPts * wavefunction.grid.yNumGridPts),
-                   save_index + 1});
+                   saveIndex + 1});
     dsMinus.resize({static_cast<unsigned long long>(wavefunction.grid.xNumGridPts * wavefunction.grid.yNumGridPts),
-                    save_index + 1});
+                    saveIndex + 1});
 
     // FFT so we update real-space arrays
 //    wavefunction.ifft();
 
     // Save new wavefunction data
-    dsPlus.select({0, save_index},
+    dsPlus.select({0, saveIndex},
                   {static_cast<unsigned long long>(wavefunction.grid.xNumGridPts * wavefunction.grid.yNumGridPts),
                    1}).write(wavefunction.plusComponent);
-    dsZero.select({0, save_index},
+    dsZero.select({0, saveIndex},
                   {static_cast<unsigned long long>(wavefunction.grid.xNumGridPts * wavefunction.grid.yNumGridPts),
                    1}).write(wavefunction.zeroComponent);
-    dsMinus.select({0, save_index},
+    dsMinus.select({0, saveIndex},
                    {static_cast<unsigned long long>(wavefunction.grid.xNumGridPts * wavefunction.grid.yNumGridPts),
                     1}).write(wavefunction.minusComponent);
 
-    save_index += 1;
+    saveIndex += 1;
 }

@@ -26,7 +26,7 @@ struct Spin1Parameters
 class Spin1DataManager2D
 {
 private:
-    unsigned int save_index{0};
+    unsigned int saveIndex{0};
 
     void saveParametersData(const Spin1Parameters &params, const Grid2D &grid);
 
