@@ -3,24 +3,36 @@
 
 Wavefunction2D::Wavefunction2D(Grid2D &grid) : grid{grid}
 {
-    plusComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
-    zeroComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
-    minusComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
-    plusFourierComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
-    zeroFourierComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
-    minusFourierComponent = new cufftComplex[grid.xNumGridPts * grid.yNumGridPts]{};
+    cudaMallocManaged(&plusComponent, grid.xNumGridPts * grid.yNumGridPts * sizeof(cufftComplex));
+    cudaMallocManaged(&zeroComponent, grid.xNumGridPts * grid.yNumGridPts * sizeof(cufftComplex));
+    cudaMallocManaged(&minusComponent, grid.xNumGridPts * grid.yNumGridPts * sizeof(cufftComplex));
+    cudaMallocManaged(&plusFourierComponent, grid.xNumGridPts * grid.yNumGridPts * sizeof(cufftComplex));
+    cudaMallocManaged(&zeroFourierComponent, grid.xNumGridPts * grid.yNumGridPts * sizeof(cufftComplex));
+    cudaMallocManaged(&minusFourierComponent, grid.xNumGridPts * grid.yNumGridPts * sizeof(cufftComplex));
 
-    trappingPotential = new double[grid.xNumGridPts * grid.yNumGridPts] {};
+    trappingPotential = new double[grid.xNumGridPts * grid.yNumGridPts]{};
+
+    generateFFTPlans();
+}
+
+void Wavefunction2D::generateFFTPlans()
+{
+    cufftPlan2d(&fftPlan, grid.xNumGridPts, grid.yNumGridPts, CUFFT_C2C);
 }
 
 Wavefunction2D::~Wavefunction2D()
 {
+    cufftDestroy(fftPlan);
+
     cudaFree(plusComponent);
     cudaFree(zeroComponent);
     cudaFree(minusComponent);
     cudaFree(plusFourierComponent);
     cudaFree(zeroFourierComponent);
     cudaFree(minusFourierComponent);
+
+    delete[] trappingPotential;
+
 }
 
 void Wavefunction2D::setTrappingPotential(const double *newTrappingPotential) const
@@ -32,11 +44,6 @@ void Wavefunction2D::setTrappingPotential(const double *newTrappingPotential) co
             trappingPotential[j + i * grid.yNumGridPts] = newTrappingPotential[j + i * grid.yNumGridPts];
         }
     }
-}
-
-void Wavefunction2D::generateFFTPlans()
-{
-    cufftPlan2d(&fftPlan, grid.xNumGridPts, grid.yNumGridPts, CUFFT_C2C);
 }
 
 void Wavefunction2D::setInitialState(const std::string &groundState) const
