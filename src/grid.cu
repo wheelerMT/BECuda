@@ -20,7 +20,9 @@ void Grid2D::constructGrids()
     yMesh = new double[xNumGridPts * yNumGridPts];
     xFourierMesh = new double[xNumGridPts * yNumGridPts];
     yFourierMesh = new double[xNumGridPts * yNumGridPts];
-    wavenumberMesh = new double[xNumGridPts * yNumGridPts];
+
+    // Allocate in shared memory as used by GPU in evolution kernels
+    cudaMallocManaged(&wavenumberMesh, xNumGridPts * yNumGridPts * sizeof(double));
 
     // Construct grids
     for (int i = 0; i < xNumGridPts; ++i)
