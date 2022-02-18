@@ -135,5 +135,5 @@ Grid2D::~Grid2D()
     delete[] yMesh;
     delete[] xFourierMesh;
     delete[] yFourierMesh;
-    delete[] wavenumberMesh;
+    cudaFree(wavenumberMesh);
 }
