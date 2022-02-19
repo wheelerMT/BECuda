@@ -5,5 +5,6 @@
 #include "grid.cuh"
 #include "wavefunction.cuh"
 #include "data.h"
+#include "kernels.cuh"
 
 #endif //BECUDA_BECUDA_CUH
