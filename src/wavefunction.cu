@@ -93,3 +93,19 @@ void Wavefunction2D::addNoiseToComponents(const std::string &components, float m
 
     // Add other component combinations as needed
 }
+
+void Wavefunction2D::fft() const
+{
+    cufftExecC2C(fftPlan, plusComponent, plusFourierComponent, CUFFT_FORWARD);
+    cufftExecC2C(fftPlan, zeroComponent, zeroFourierComponent, CUFFT_FORWARD);
+    cufftExecC2C(fftPlan, minusComponent, minusFourierComponent, CUFFT_FORWARD);
+    cudaDeviceSynchronize();
+}
+
+void Wavefunction2D::ifft() const
+{
+    cufftExecC2C(fftPlan, plusFourierComponent, plusComponent, CUFFT_INVERSE);
+    cufftExecC2C(fftPlan, zeroFourierComponent, zeroComponent, CUFFT_INVERSE);
+    cufftExecC2C(fftPlan, minusFourierComponent, minusComponent, CUFFT_INVERSE);
+    cudaDeviceSynchronize();
+}

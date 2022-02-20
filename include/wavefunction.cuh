@@ -19,6 +19,8 @@ class Wavefunction2D : Wavefunction
 private:
     cufftHandle fftPlan{};
 
+    void generateFFTPlans();
+
     void setPolarInitialState() const;
 
 public:
@@ -33,13 +35,16 @@ public:
 
     ~Wavefunction2D();
 
-    void generateFFTPlans();
-
     void setTrappingPotential(const double *trappingPotential) const;
 
     void setInitialState(const std::string &groundState) const;
 
     void addNoiseToComponents(std::string const &components, float mean, float stddev) const;
+
+    void fft() const;
+
+    void ifft() const;
+
 };
 
 #endif //BECUDA_WAVEFUNCTION_H
